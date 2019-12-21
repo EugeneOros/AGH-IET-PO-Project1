@@ -6,25 +6,28 @@ import javafx.scene.shape.Rectangle;
 
 public class Grass extends StackPane {
     private Vector2d position;
+    private GrassField map;
 
-    public Grass(Vector2d grassPosition, IWorldMap map) {
+    public Grass(Vector2d grassPosition, GrassField map) {
         this.position = grassPosition;
-        Rectangle rect = new Rectangle();
-        rect.setHeight(map.getCellSize());
-        rect.setWidth(map.getCellSize());
-        rect.setStroke(Color.web("#1B1112", 1.0));
-        rect.setFill(Color.web("#376040", 1.0));
-        setTranslateY(this.getPosition().y * map.getCellSize());
-        setTranslateX((this.getPosition().x) * map.getCellSize());
-        getChildren().addAll(rect);
+        this.map = map;
+        setVisualView();
     }
 
     Vector2d getPosition() {
         return this.position;
     }
 
-    public String toString() {
-        return "*";
+
+    private void setVisualView() {
+        Rectangle rect = new Rectangle();
+        rect.setHeight(map.getVisualizer().getVisualCellSize());
+        rect.setWidth(map.getVisualizer().getVisualCellSize());
+        rect.setStroke(Color.web("#1B1112", 1.0));
+        rect.setFill(Color.web("#376040", 1.0));
+        setTranslateY(this.getPosition().y * map.getVisualizer().getVisualCellSize());
+        setTranslateX((this.getPosition().x) * map.getVisualizer().getVisualCellSize());
+        getChildren().addAll(rect);
     }
 
 }

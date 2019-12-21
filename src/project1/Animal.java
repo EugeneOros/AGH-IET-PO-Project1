@@ -10,60 +10,47 @@ import javafx.scene.shape.Rectangle;
 
 public class Animal extends StackPane {
 
-    private Vector2d position;
-    private MapDirection orientation;
-    private IWorldMap map;
-    private Genes genes;
+    /**
+     * ------------------------------------------------------ATTRIBUTES--------------------------------------------------------------
+     */
     private ArrayList<IPositionChangeObserver> observers = new ArrayList<>();
+    private MapDirection orientation;
+    private Vector2d position;
+    private GrassField map;
+    private Genes genes;
     private int energy;
-    public Rectangle rect = new Rectangle();
-    private Text textOnAnimal = new Text();
     private Age age = new Age(0, 0, 0);
-    ;
     private int numOfChildren = 0;
+    private Rectangle visualRectangle = new Rectangle();
+    private Text textOnAnimal = new Text();
 
 
     /**
      * ----------------------------------------------------CONSTRUCTORS---------------------------------------------------------------------
      */
-    public Animal(IWorldMap map) {
+    public Animal(GrassField map) {
         this(map, new Vector2d(0, 0));
     }
 
-    public Animal(IWorldMap map, Vector2d initialPosition) {
-        this(map, initialPosition, map.getStartEnergy());
+    public Animal(GrassField map, Vector2d initialPosition) {
+        this(map, initialPosition, map.getMapParameters().getStartEnergy());
     }
 
-    public Animal(IWorldMap map, Vector2d initialPosition, int energy) {
+    public Animal(GrassField map, Vector2d initialPosition, int energy) {
+        this(map, initialPosition, energy, null, null);
+    }
+
+    public Animal(GrassField map, Vector2d initialPosition, int energy, Genes genesOfParant1, Genes genesOfParant2) {
         this.energy = energy;
         this.orientation = MapDirection.getRandom();
         this.map = map;
         this.position = initialPosition;
-        this.genes = new Genes();
-
-
-        rect.setHeight(this.map.getCellSize());
-        rect.setWidth(this.map.getCellSize());
-        rect.setStroke(Color.web("#1B1112", 1.0));
-        rect.setFill(Color.web("#48240E", 1.0));
-        textOnAnimal.setStyle("-fx-font: 10 arial;");
-        getChildren().addAll(rect, textOnAnimal);
-    }
-
-    public Animal(IWorldMap map, Vector2d initialPosition, int energy, Genes genesOfParant1, Genes genesOfParant2) {
-        this.energy = energy;
-        this.orientation = MapDirection.getRandom();
-        this.map = map;
-        this.position = initialPosition;
-        this.genes = new Genes(genesOfParant1, genesOfParant2);
-
-        rect.setHeight(this.map.getCellSize());
-        rect.setWidth(this.map.getCellSize());
-        rect.setStroke(Color.web("#1B1112", 1.0));
-        rect.setFill(Color.web("#48240E", 1.0));
-        textOnAnimal.setStyle("-fx-font: 10 arial;");
-        getChildren().addAll(rect, textOnAnimal);
-
+        if (genesOfParant1 == null) {
+            this.genes = new Genes();
+        } else {
+            this.genes = new Genes(genesOfParant1, genesOfParant2);
+        }
+        setVisualView();
     }
     /**------------------------------------------------------METHODS---------------------------------------------------------------------*/
     /**
@@ -91,6 +78,40 @@ public class Animal extends StackPane {
 
     public void setTextOnAnimal(String text) {
         this.textOnAnimal.setText(text);
+    }
+
+    public Rectangle getVisualRectangle() {
+        return visualRectangle;
+    }
+
+    /**
+     * ------------------------SETTERS-----------------------
+     **/
+    private void setVisualView() {
+        visualRectangle.setHeight(map.getVisualizer().getVisualCellSize());
+        visualRectangle.setWidth(map.getVisualizer().getVisualCellSize());
+        visualRectangle.setStroke(Color.web("#1B1112", 1.0));
+        visualRectangle.setFill(Color.web("#48240E", 1.0));
+        textOnAnimal.setStyle("-fx-font: 10 arial;");
+        getChildren().addAll(visualRectangle, textOnAnimal);
+    }
+
+
+    public void addEnergy(int energy) {
+        this.energy += energy;
+    }
+
+    public void addOneDay() {
+        this.age.addOneDay();
+    }
+
+    public void subtractEnergy(int energy) {
+        this.energy = this.energy - energy;
+    }
+
+
+    public void oneChildrenMore() {
+        this.numOfChildren++;
     }
 
     /**
@@ -143,37 +164,6 @@ public class Animal extends StackPane {
         Vector2d oldPosition = this.position;
         this.position = positionCanMoveTo;
         this.positionChanged(oldPosition);
-//        this.setTranslateY(this.getPosition().y  * map.getCellSize());
-//        this.setTranslateX((this.getPosition().x) * map.getCellSize());
-//        if(this.getEnergy() <= (map.getStartEnergy()/5)){
-//            this.rect.setFill(Color.web("#C7CFD2",1.0));
-//        }else if (this.getEnergy() <= (map.getStartEnergy()*2/5)){
-//            this.rect.setFill(Color.web("#FFFECB",1.0));
-//        }else if(this.getEnergy()<=(map.getStartEnergy()*3/5)){
-//            this.rect.setFill(Color.web("#FBFF27",1.0));
-//        }else if(this.getEnergy()<=(map.getStartEnergy()*4/5)){
-//            this.rect.setFill(Color.web("#7d694c",1.0));
-//        }else if(this.getEnergy()>=(map.getStartEnergy()*4/5)){
-//            this.rect.setFill( Color.web("#48240E",1.0));
-//        }
-//        this.age.addOneDay();
-    }
-
-    public void addEnergy(int energy) {
-        this.energy += energy;
-    }
-
-    public void addOneDay() {
-        this.age.addOneDay();
-    }
-
-    public void subtractEnergy(int energy) {
-        this.energy = this.energy - energy;
-    }
-
-
-    public void oneChildrenMore() {
-        this.numOfChildren++;
     }
 
     void addObserver(IPositionChangeObserver observer) {
@@ -189,11 +179,5 @@ public class Animal extends StackPane {
             observer.positionChanged(oldPosition, this.position, this);
         }
     }
-
-    public String toString() {
-        return "A";
-    }
-
-
 }
 
