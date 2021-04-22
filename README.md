@@ -9,5 +9,6 @@ Each day simulation consists of several successive actions
 * food (the plant is eaten by the animal with the most energy, or by several of the strongest animals if more than one has the same, highest energy; in this case, the energy of the plant is shared),
 * animal breeding (the two animals with the highest energy in a given field always breed; if there are more animals with the same energy, the choice is random),
 * adding new plants to the map.
+
 Of course, at the beginning of the simulation, we place one or more animals in the middle of the world (Adam / Eve)
 
