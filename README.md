@@ -12,7 +12,7 @@ Each day simulation consists of several successive actions
 
 Of course, at the beginning of the simulation, we place one or more animals in the middle of the world (Adam / Eve)
 
-### Commissioning
+### How to run
 The class that starts the program is called "World"
 
 ### Technologies
